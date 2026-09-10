@@ -9,7 +9,7 @@
 <body>
   <h1>✈️ Agente de vuelos</h1>
   <div class="actualizado">
-    Última sincronización: 2026-09-10T08:13:18+00:00 UTC
+    Última sincronización: 2026-09-10T08:17:23+00:00 UTC
   </div>
 
   
@@ -29,6 +29,80 @@
   </a>
   
 
-  <a class="accion" href="https://github.com/keivan1919-spec/Flight-agent/issues/new?title=Nueva+b%C3%BAsqueda%3A+&body=Describe+el+viaje%3A+origen%28es%29%2C+destino%2C+fechas+o+rango%2C+duraci%C3%B3n%2C+precio+m%C3%A1ximo%2C+si+vale+con+escalas%2C+clase.+Puedes+escribirlo+como+texto+libre.%0A%0AEjemplo%3A+%22Quiero+ir+de+Bilbao+a+Roma+unos+4+d%C3%ADas+en+la+segunda+quincena+de+noviembre%2C+m%C3%A1ximo+180%E2%82%AC%2C+vale+con+escalas.%22%0A%0A---%0ABorra+este+ejemplo+y+escribe+tu+petici%C3%B3n+aqu%C3%AD+debajo%3A%0A" target="_blank" rel="noopener">➕ Añadir búsqueda</a>
+  <button class="accion" id="boton-abrir-modal" type="button">➕ Añadir búsqueda</button>
+
+  <dialog id="dialogo-nueva-busqueda">
+    <h2>Añadir búsqueda</h2>
+    <p class="ayuda">
+      Describe el viaje: origen(es), destino, fechas o rango, duración,
+      precio máximo, si vale con escalas, clase. Puedes escribirlo o
+      dictarlo con el micrófono.
+    </p>
+    <textarea id="texto-busqueda" rows="6" placeholder='Ej: "Quiero ir de Bilbao a Roma unos 4 días en la segunda quincena de noviembre, máximo 180€, vale con escalas."'></textarea>
+    <div class="acciones-modal">
+      <button type="button" id="boton-mic" title="Dictar por voz">🎤</button>
+      <button type="button" id="boton-cancelar">Cancelar</button>
+      <button type="button" class="accion" id="boton-enviar">Enviar petición</button>
+    </div>
+  </dialog>
+
+  <script>
+    (function () {
+      var dialogo = document.getElementById("dialogo-nueva-busqueda");
+      var texto = document.getElementById("texto-busqueda");
+      var urlBase = "https://github.com/keivan1919-spec/Flight-agent/issues/new?title=Nueva+b%C3%BAsqueda%3A+";
+
+      document.getElementById("boton-abrir-modal").addEventListener("click", function () {
+        dialogo.showModal();
+      });
+      document.getElementById("boton-cancelar").addEventListener("click", function () {
+        dialogo.close();
+      });
+      document.getElementById("boton-enviar").addEventListener("click", function () {
+        var valor = texto.value.trim();
+        if (!valor) {
+          texto.focus();
+          return;
+        }
+        window.open(urlBase + "&body=" + encodeURIComponent(valor), "_blank");
+        dialogo.close();
+      });
+
+      // Dictado por voz: Web Speech API, disponible en Chrome/Safari modernos.
+      // Si el navegador no la soporta, se oculta el botón sin más (se puede
+      // seguir escribiendo a mano).
+      var Reconocimiento = window.SpeechRecognition || window.webkitSpeechRecognition;
+      var botonMic = document.getElementById("boton-mic");
+      if (!Reconocimiento) {
+        botonMic.style.display = "none";
+      } else {
+        var reconocimiento = new Reconocimiento();
+        reconocimiento.lang = "es-ES";
+        reconocimiento.continuous = true;
+        reconocimiento.interimResults = false;
+        var escuchando = false;
+
+        reconocimiento.addEventListener("result", function (evento) {
+          var ultimo = evento.results[evento.results.length - 1];
+          if (ultimo.isFinal) {
+            texto.value = (texto.value + " " + ultimo[0].transcript).trim();
+          }
+        });
+        reconocimiento.addEventListener("end", function () {
+          escuchando = false;
+          botonMic.classList.remove("grabando");
+        });
+        botonMic.addEventListener("click", function () {
+          if (escuchando) {
+            reconocimiento.stop();
+          } else {
+            reconocimiento.start();
+            escuchando = true;
+            botonMic.classList.add("grabando");
+          }
+        });
+      }
+    })();
+  </script>
 </body>
 </html>
