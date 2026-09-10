@@ -41,6 +41,19 @@ h1 { font-size: 1.3rem; margin-bottom: 0.2rem; }
 .enlaces a { margin-right: 0.8rem; font-size: 0.85rem; }
 .vacio { color: #888; font-style: italic; }
 
+.accion {
+  display: inline-block;
+  margin-top: 0.5rem;
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  color: inherit;
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+.accion:hover { border-color: #999; }
+.accion-borrar { border-color: #d66; color: #b33; margin-bottom: 1rem; }
+
 @media (prefers-color-scheme: dark) {
   body { background: #111315; color: #e6e6e6; }
   .busqueda { background: #1b1d20; border-color: #333; }
@@ -49,4 +62,7 @@ h1 { font-size: 1.3rem; margin-bottom: 0.2rem; }
   .criterios, .detalle { color: #a3a3a3; }
   .actualizado, .vacio { color: #8a8a8a; }
   a { color: #7ab8ff; }
+  .accion { border-color: #444; }
+  .accion:hover { border-color: #666; }
+  .accion-borrar { border-color: #a44; color: #e88; }
 }
